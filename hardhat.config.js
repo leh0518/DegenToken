@@ -18,13 +18,13 @@ const forkingData = process.env.FORK_FUJI === "true"
     }
     : undefined;
 
-    const accounts = forkingData
-    ? [
-        "0xa74213ac35d69353e12f3e1dbd15de26c78e7309442ca35a421f536810763de5",
-        "0x5d5f20db3364d83f527fee23a45ce3251cb050c47c656e650fff31df58238d22",
-        "0x605c61e5fa66504067692e5c4d5915ff3fd89ccef2621b8d27bc67a0efbf2e5f",
-      ]
-    : ["a74213ac35d69353e12f3e1dbd15de26c78e7309442ca35a421f536810763de5"];
+    const accounts = process.env.WALLET_PRIVATE_KEY
+  ? [
+      process.env.WALLET_PRIVATE_KEY,
+      process.env.WALLET_PRIVATE_KEY_2,
+      process.env.WALLET_PRIVATE_KEY_3,
+    ]
+  : [process.env.WALLET_PRIVATE_KEY];
 
 /** @type import('hardhat/config').HardhatUserConfig */
 module.exports = {
