@@ -1,44 +1,54 @@
-require("@nomicfoundation/hardhat-toolbox");
+require("@nomiclabs/hardhat-etherscan");
+require("@nomiclabs/hardhat-ethers");
 require('dotenv').config();
 
-const FORK_FUJI = false;
-const FORK_MAINNET = false;
-let forkingData = undefined;
+const NETWORK_IDS = {
+  HARDHAT: 43112,
+  FUJI: 43113,
+  MAINNET: 43114,
+};
 
-if (FORK_MAINNET) {
-  forkingData = {
-    url: "https://api.avax.network/ext/bc/C/rpcc",
-  };
-}
-if (FORK_FUJI) {
-  forkingData = {
+const forkingData = process.env.FORK_FUJI === "true"
+  ? {
     url: "https://api.avax-test.network/ext/bc/C/rpc",
-  };
-}
+  }
+  : process.env.FORK_MAINNET === "true"
+    ? {
+      url: "https://api.avax.network/ext/bc/C/rpc",
+    }
+    : undefined;
+
+    const accounts = forkingData
+    ? [
+        "0xa74213ac35d69353e12f3e1dbd15de26c78e7309442ca35a421f536810763de5",
+        "0x5d5f20db3364d83f527fee23a45ce3251cb050c47c656e650fff31df58238d22",
+        "0x605c61e5fa66504067692e5c4d5915ff3fd89ccef2621b8d27bc67a0efbf2e5f",
+      ]
+    : ["a74213ac35d69353e12f3e1dbd15de26c78e7309442ca35a421f536810763de5"];
 
 /** @type import('hardhat/config').HardhatUserConfig */
 module.exports = {
+  etherscan: {
+    apiKey: process.env.SNOWTRACE_API_KEY,
+  },
   solidity: "0.8.18",
   networks: {
     hardhat: {
-      gasPrice: 225000000000,
-      chainId: !forkingData ? 43112 : undefined, //Only specify a chainId if we are not forking
+      gasPrice: 25000000000,
+      chainId: NETWORK_IDS.HARDHAT,
       forking: forkingData,
     },
     fuji: {
       url: "https://api.avax-test.network/ext/bc/C/rpc",
-      gasPrice: 225000000000,
-      chainId: 43113,
-      accounts: [process.env.WALLET_PRIVATE_KEY], // we use a .env file to hide our wallets private key
+      gasPrice: 25000000000,
+      chainId: NETWORK_IDS.FUJI,
+      accounts: accounts,
     },
     mainnet: {
       url: "https://api.avax.network/ext/bc/C/rpc",
-      gasPrice: 225000000000,
-      chainId: 43114,
-      accounts: [process.env.WALLET_PRIVATE_KEY],
+      gasPrice: 25000000000,
+      chainId: NETWORK_IDS.MAINNET,
+      accounts: accounts,
     },
-  },
-  etherscan: {
-    apiKey: process.env.SNOWTRACE_API_KEY, // we use an .env file to hide our Snowtrace API KEY
   },
 };
